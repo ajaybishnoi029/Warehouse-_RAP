@@ -1,0 +1,31 @@
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Store Bin CDS View'
+@Metadata.ignorePropagatedAnnotations: true
+define view entity ZAB_I_StorBin
+  as select from zwm_storbin
+  association to parent ZAB_I_Warehouse as _warehouse on _warehouse.WarehouseId = $projection.WarehouseId
+  composition [0..*] of ZAB_I_StockItem as _StockItem
+{
+  key warehouse_id          as WarehouseId,
+  key bin_id                as BinId,
+      bin_type              as BinType,
+      @Semantics.quantity.unitOfMeasure: 'unit'
+      max_capacity          as MaxCapacity,
+      @Semantics.quantity.unitOfMeasure: 'unit'
+      current_qty           as CurrentQty,
+      unit                  as Unit,
+      status                as Status,
+      @Semantics.user.createdBy: true
+      local_created_by      as LocalCreatedBy,
+      @Semantics.systemDateTime.createdAt: true
+      local_created_at      as LocalCreatedAt,
+      @Semantics.user.lastChangedBy: true
+      local_last_changed_by as LocalLastChangedBy,
+      @Semantics.systemDateTime.localInstanceLastChangedAt: true
+      local_last_changed_at as LocalLastChangedAt,
+      @Semantics.systemDateTime.lastChangedAt: true
+      last_changed_at       as LastChangedAt,
+      _warehouse,
+      _StockItem
+}
