@@ -1,0 +1,89 @@
+managed implementation in class zbp_ab_i_warehouse unique;
+strict ( 2 );
+
+define behavior for ZAB_I_Warehouse alias Warehouse
+persistent table zwm_warehouse
+lock master
+authorization master ( instance )
+etag master LastChangedAt
+{
+  create ( authorization : global );
+  update;
+  delete;
+  field ( readonly : update ) WarehouseId;
+  association _storbin { create; }
+  mapping for zwm_warehouse
+    {
+      WarehouseId        = warehouse_id;
+      Name               = name;
+      City               = city;
+      CountryCode        = country_code;
+      PhoneNumber        = phone_number;
+      EmailAddress       = email_address;
+      Status             = status;
+      LocalCreatedBy     = local_created_by;
+      LocalCreatedAt     = local_created_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LastChangedAt      = last_changed_at;
+    }
+
+
+}
+
+define behavior for ZAB_I_StorBin alias StorBin
+persistent table zwm_storbin
+lock dependent by _warehouse
+authorization dependent by _warehouse
+etag master LastChangedAt
+{
+  update;
+  delete;
+  field ( readonly ) WarehouseId, BinId;
+  association _warehouse;
+  association _StockItem { create; }
+  mapping for zwm_storbin
+    {
+      WarehouseId        = warehouse_id;
+      BinId              = bin_id;
+      BinType            = bin_type;
+      MaxCapacity        = max_capacity;
+      CurrentQty         = current_qty;
+      Unit               = unit;
+      Status             = status;
+      LocalCreatedBy     = local_created_by;
+      LocalCreatedAt     = local_created_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LastChangedAt      = last_changed_at;
+    }
+}
+
+define behavior for ZAB_I_StockItem alias StockItem
+persistent table zwm_stockitem
+lock dependent by _warehouse
+authorization dependent by _warehouse
+etag master LastChangedAt
+{
+  update;
+  delete;
+  field ( readonly : update ) WarehouseId, BinId, StockItemId;
+  association _warehouse;
+  association _StorBin;
+
+  mapping for zwm_stockitem
+    {
+      WarehouseId        = warehouse_id;
+      BinId              = bin_id;
+      StockItemId        = stock_item_id;
+      MaterialId         = material_id;
+      Quantity           = quantity;
+      Unit               = unit;
+      BatchNumber        = batch_number;
+      LocalCreatedBy     = local_created_by;
+      LocalCreatedAt     = local_created_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LastChangedAt      = last_changed_at;
+    }
+}
