@@ -32,6 +32,10 @@ annotate entity ZAB_C_Warehouse with
   @UI.identification: [{ label: 'Warehouse ID', position: 10}]
   @UI.selectionField: [{ position: 10 }]
   @Search.defaultSearchElement: true
+  @Consumption.valueHelpDefinition: [{ entity: {
+                                           name: 'ZAB_I_WAREHOUSE',
+                                           element: 'WarehouseId'
+                                       } }]
   WarehouseId;
   @UI.lineItem: [{ label: 'Name', position: 20  }]
   @UI.identification: [{ label: 'Name', position: 20}]
@@ -44,6 +48,7 @@ annotate entity ZAB_C_Warehouse with
   City;
   @UI.lineItem: [{ label: 'Country Code', position: 40  }]
   @UI.identification: [{ label: 'Country Code', position: 40}]
+  @Consumption.valueHelpDefinition: [{entity: { name: 'I_CountryVH', element: 'Country' } }]
   CountryCode;
   @UI.lineItem: [{ label: 'Phone', position: 50  }]
   @UI.identification: [{ label: 'Phone Number', position: 50}]
