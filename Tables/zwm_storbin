@@ -1,0 +1,26 @@
+@EndUserText.label : 'Storage Bin for Warehouse'
+@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory : #TRANSPARENT
+@AbapCatalog.deliveryClass : #A
+@AbapCatalog.dataMaintenance : #RESTRICTED
+define table zwm_storbin {
+
+  key client         : abap.clnt not null;
+  @AbapCatalog.foreignKey.screenCheck : false
+  key warehouse_id   : werks_d not null
+    with foreign key [0..*,1] zwm_warehouse
+      where client = zwm_storbin.client
+        and warehouse_id = zwm_storbin.warehouse_id;
+  key bin_id         : zwm_binid not null;
+  bin_type           : abap.char(1);
+  max_capacity       : abap.dec(9,2);
+  current_qty        : abap.dec(9,2);
+  unit               : abap.unit(3);
+  status             : abap.char(1);
+  localcreatedby     : abap.char(12);
+  localcreatedat     : timestampl;
+  locallastchangedby : abap.char(12);
+  locallastchangedat : timestampl;
+  lastchangedat      : timestampl;
+
+}
