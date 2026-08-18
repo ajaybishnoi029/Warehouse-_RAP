@@ -1,0 +1,31 @@
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Stock Item Warehouse'
+@Metadata.ignorePropagatedAnnotations: true
+define view entity ZAB_I_StockItem
+  as select from zwm_stockitem
+  association        to parent ZAB_I_StorBin as _StorBin   on  _StorBin.WarehouseId = $projection.WarehouseId
+                                                           and _StorBin.BinId       = $projection.BinId
+  association [1..1] to ZAB_I_Warehouse      as _warehouse on  _warehouse.WarehouseId = $projection.WarehouseId
+{
+  key warehouse_id          as WarehouseId,
+  key bin_id                as BinId,
+  key stock_item_id         as StockItemId,
+      material_id           as MaterialId,
+      @Semantics.quantity.unitOfMeasure: 'Unit'
+      quantity              as Quantity,
+      unit                  as Unit,
+      batch_number          as BatchNumber,
+      @Semantics.user.createdBy: true
+      local_created_by      as LocalCreatedBy,
+      @Semantics.systemDateTime.createdAt: true
+      local_created_at      as LocalCreatedAt,
+      @Semantics.user.lastChangedBy: true
+      local_last_changed_by as LocalLastChangedBy,
+      @Semantics.systemDateTime.localInstanceLastChangedAt: true
+      local_last_changed_at as LocalLastChangedAt,
+      @Semantics.systemDateTime.lastChangedAt: true
+      last_changed_at       as LastChangedAt,
+      _StorBin,
+      _warehouse
+}
