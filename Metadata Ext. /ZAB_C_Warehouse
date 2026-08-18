@@ -1,0 +1,70 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: {
+    typeName: 'Warehouse',
+    typeNamePlural: 'Warehouses',
+    title: {
+        type: #STANDARD,
+        label: 'Warehouse',
+        value: 'WarehouseId'
+    }
+}
+annotate entity ZAB_C_Warehouse with
+{
+  @UI.facet: [{
+        id: 'Warehouse',
+        purpose: #STANDARD,
+        position: 10 ,
+        label: 'Warehouse',
+        type: #IDENTIFICATION_REFERENCE
+    },
+    {
+        id: 'storbin',
+        purpose: #STANDARD,
+        position: 20 ,
+        label: 'Store Bin',
+        type: #LINEITEM_REFERENCE,
+        targetElement: '_storbin'
+    }
+    ]
+
+  @UI.lineItem: [{ label: 'Warehouse ID', position: 10  }]
+  @UI.identification: [{ label: 'Warehouse ID', position: 10}]
+  @UI.selectionField: [{ position: 10 }]
+  @Search.defaultSearchElement: true
+  WarehouseId;
+  @UI.lineItem: [{ label: 'Name', position: 20  }]
+  @UI.identification: [{ label: 'Name', position: 20}]
+  @UI.selectionField: [{ position: 20 }]
+  @Search.defaultSearchElement: true
+  @Search.fuzzinessThreshold: 0.7
+  Name;
+  @UI.lineItem: [{ label: 'City', position: 30  }]
+  @UI.identification: [{ label: 'City', position: 30}]
+  City;
+  @UI.lineItem: [{ label: 'Country Code', position: 40  }]
+  @UI.identification: [{ label: 'Country Code', position: 40}]
+  CountryCode;
+  @UI.lineItem: [{ label: 'Phone', position: 50  }]
+  @UI.identification: [{ label: 'Phone Number', position: 50}]
+  PhoneNumber;
+  @UI.lineItem: [{ label: 'E-mail', position: 60  }]
+  @UI.identification: [{ label: 'E-mail', position: 60}]
+  EmailAddress;
+  @UI.lineItem: [{ label: 'Status', position: 70  }]
+  @UI.identification: [{ label: 'Status', position: 70}]
+  Status;
+  @UI.identification: [{ label: 'Created By', position: 80}]
+  LocalCreatedBy;
+  @UI.identification: [{ label: 'Created At', position: 90}]
+  LocalCreatedAt;
+  @UI.hidden: true
+  LocalLastChangedBy;
+  @UI.hidden: true
+  LocalLastChangedAt;
+  @UI.identification: [{ label: 'Last Changed At', position: 95}]
+  LastChangedAt;
+  /* Associations */
+  //  _storbin;
+
+}
