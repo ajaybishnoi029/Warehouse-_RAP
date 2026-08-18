@@ -1,0 +1,23 @@
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Projection View Warehouse Store Bin Item'
+@Metadata.ignorePropagatedAnnotations: true
+define view entity ZAB_C_STOCKITEM
+  as projection on ZAB_I_StockItem
+{
+  key WarehouseId,
+  key BinId,
+  key StockItemId,
+      MaterialId,
+      @Semantics.quantity.unitOfMeasure: 'unit'
+      Quantity,
+      Unit,
+      BatchNumber,
+      LocalCreatedBy,
+      LocalCreatedAt,
+      LocalLastChangedBy,
+      LocalLastChangedAt,
+      LastChangedAt,
+      /* Associations */
+      _StorBin : redirected to parent ZAB_C_STORBIN,
+      _warehouse
+}
