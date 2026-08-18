@@ -1,0 +1,29 @@
+projection;
+strict ( 2 );
+
+define behavior for ZAB_C_Warehouse alias Warehouse
+{
+  use create;
+  use update;
+  use delete;
+
+  use association _storbin { create; }
+}
+
+define behavior for ZAB_C_STORBIN alias StorBin
+{
+  use update;
+  use delete;
+
+  use association _warehouse;
+  use association _StockItem { create; }
+}
+
+define behavior for ZAB_C_STOCKITEM alias StockItem
+{
+  use update;
+  use delete;
+
+  use association _warehouse;
+  use association _StorBin;
+}
