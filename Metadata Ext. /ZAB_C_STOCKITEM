@@ -1,0 +1,50 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: {
+    typeName: 'Stockitem',
+    typeNamePlural: 'Stockitems',
+    title: {
+        type: #STANDARD,
+        label: 'Stock items',
+        value: 'StockItemId'
+    }
+}
+annotate entity ZAB_C_STOCKITEM with
+{
+  @UI.facet: [{
+       id: 'Stockitem',
+       purpose: #STANDARD,
+       position: 10 ,
+       label: 'Stock Items',
+       type: #IDENTIFICATION_REFERENCE
+   }
+   ]
+  @UI.identification: [{ label: 'Warehouse ID', position: 10}]
+  WarehouseId;
+  @UI.identification: [{ label: 'Bin ID', position: 20}]
+  BinId;
+  @UI.identification: [{ label: 'Stock Item ID', position: 30}]
+  StockItemId;
+  @UI.identification: [{ label: 'Material', position: 40}]
+  MaterialId;
+  @UI.identification: [{ label: 'Quantity', position: 50}]
+  Quantity;
+  @UI.identification: [{ label: 'Unit', position: 60}]
+  Unit;
+  @UI.identification: [{ label: 'Batch', position: 70}]
+  BatchNumber;
+  @UI.identification: [{ label: 'Created By', position: 80}]
+  LocalCreatedBy;
+  @UI.identification: [{ label: 'Created At', position: 90}]
+  LocalCreatedAt;
+  @UI.hidden: true
+  LocalLastChangedBy;
+  @UI.hidden: true
+  LocalLastChangedAt;
+  @UI.identification: [{ label: 'Last Changed At', position: 95}]
+  LastChangedAt;
+  /* Associations */
+  //    _StorBin;
+  //    _warehouse;
+
+}
