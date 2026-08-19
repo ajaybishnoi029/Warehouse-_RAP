@@ -1,0 +1,58 @@
+CLASS zcl_data_generator DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+    INTERFACES:
+      if_oo_adt_classrun.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS zcl_data_generator IMPLEMENTATION.
+
+  METHOD if_oo_adt_classrun~main.
+
+    DATA: it_data TYPE TABLE OF zab_status.
+    DATA: wa_data TYPE zab_status.
+    DELETE FROM zab_status  .
+    COMMIT WORK.
+
+    wa_data-client = sy-mandt.
+    wa_data-id = '1'.
+    wa_data-status = 'A'.
+    wa_data-text = 'Active'.
+    APPEND wa_data TO it_data.
+    CLEAR wa_data.
+
+
+    wa_data-client = sy-mandt.
+    wa_data-id = '1'.
+    wa_data-status = 'B'.
+    wa_data-text = 'Blocked'.
+    APPEND wa_data TO it_data.
+    CLEAR wa_data.
+
+    wa_data-client = sy-mandt.
+    wa_data-id = '2'.
+    wa_data-status = 'R'.
+    wa_data-text = 'Rack'.
+    APPEND wa_data TO it_data.
+    CLEAR wa_data.
+
+    wa_data-client = sy-mandt.
+    wa_data-id = '2'.
+    wa_data-status = 'F'.
+    wa_data-text = 'Floor'.
+    APPEND wa_data TO it_data.
+    CLEAR wa_data.
+
+    INSERT zab_status FROM TABLE  @it_data.
+    COMMIT WORK.
+*  ENDMETHOD.
+
+  ENDMETHOD.
+ENDCLASS.
