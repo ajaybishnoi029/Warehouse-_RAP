@@ -4,6 +4,7 @@
 define root view entity ZAB_I_Warehouse
   as select from zwm_warehouse
   composition [0..*] of ZAB_I_StorBin as _storbin
+  association [1..1] to ZAB_STATUS_VH as _STATUS on _STATUS.Status = $projection.Status
 {
   key warehouse_id          as WarehouseId,
       name                  as Name,
@@ -29,5 +30,6 @@ define root view entity ZAB_I_Warehouse
       local_last_changed_at as LocalLastChangedAt,
       @Semantics.systemDateTime.lastChangedAt: true
       last_changed_at       as LastChangedAt,
-      _storbin
+      _storbin,
+      _STATUS
 }
