@@ -1,0 +1,13 @@
+@EndUserText.label : 'Status Table'
+@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory : #TRANSPARENT
+@AbapCatalog.deliveryClass : #A
+@AbapCatalog.dataMaintenance : #RESTRICTED
+define table zab_status {
+
+  key client : abap.clnt not null;
+  key id     : char1 not null;
+  key status : char1 not null;
+  text       : char25;
+
+}
