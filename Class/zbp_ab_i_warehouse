@@ -1,0 +1,116 @@
+CLASS lhc_stockitem DEFINITION INHERITING FROM cl_abap_behavior_handler.
+
+  PRIVATE SECTION.
+
+    METHODS ValidateQty FOR VALIDATE ON SAVE
+       keys FOR StockItem~ValidateQty.
+
+    METHODS CurrentQty FOR DETERMINE ON SAVE
+       keys FOR StockItem~CurrentQty.
+
+ENDCLASS.
+
+CLASS lhc_stockitem IMPLEMENTATION.
+
+  METHOD ValidateQty.
+
+    DATA: ls_sqty TYPE kwmeng.
+
+    READ ENTITIES OF ZAB_I_Warehouse IN LOCAL MODE                  " To get Max. Qty
+    ENTITY StorBin
+    FIELDS ( MaxCapacity ) WITH CORRESPONDING #( keys )
+    RESULT DATA(lT_maxQty).
+
+    DATA(ls_max_qty) = REDUCE kwmeng( INIT sum = 0
+                                          FOR item IN lT_maxQty
+                                          NEXT sum = sum + item-MaxCapacity ).
+
+
+    READ ENTITIES OF ZAB_I_Warehouse IN LOCAL MODE                  " To Read All Stock Item for Qty Present
+      ENTITY StorBin BY \_stockitem
+        FIELDS ( Quantity )  WITH CORRESPONDING #(   keys )
+        RESULT DATA(lt_stockqty)
+        FAILED DATA(lt_failed).
+
+
+    LOOP AT lt_stockqty INTO DATA(ls_stockqty).
+      ls_sqty += ls_stockqty-Quantity.
+    ENDLOOP.
+
+
+    IF ls_sqty > ls_max_qty.
+      APPEND VALUE #( %tky = ls_stockqty-%tky ) TO failed-stockitem.
+
+      APPEND VALUE #( %tky = keys[ 1 ]-%tky
+                     %msg = new_message_with_text(
+                              severity = if_abap_behv_message=>severity-error
+                              text     = |Total Qty. can't exceed Max. Capacity:{ ls_max_qty }|
+                            )
+                      ) TO reported-stockitem.
+    ENDIF.
+
+*    READ ENTITIES OF ZAB_I_Warehouse IN LOCAL MODE                  " To Read Current Qty
+*    ENTITY StockItem
+*    FIELDS ( WarehouseId  BinId Quantity ) WITH CORRESPONDING #(   keys )
+*    RESULT DATA(lt_stockitm).
+
+  ENDMETHOD.
+
+  METHOD CurrentQty.                                                " Update Current Qty in the Store Bin
+
+
+    DATA:  ls_totQty TYPE kwmeng.
+    DATA: lt_update TYPE TABLE FOR UPDATE zab_i_storbin.
+
+    READ ENTITIES OF ZAB_I_Warehouse IN LOCAL MODE                  " To Read All Stock Item for Qty Present
+        ENTITY StorBin BY \_stockitem
+          FIELDS ( Quantity )  WITH CORRESPONDING #(   keys )
+          RESULT DATA(lt_stockqty)
+          FAILED DATA(lt_failed).
+
+    LOOP AT lt_stockqty INTO DATA(ls_stockqty).
+      ls_totQty += ls_stockqty-Quantity.
+    ENDLOOP.
+
+    lt_update = VALUE #(
+      ( WarehouseId = ls_stockqty-WarehouseId
+        BinId       = ls_stockqty-BinId
+        CurrentQty  = ls_totqty   " new quantity you calculated
+        %control-CurrentQty = if_abap_behv=>mk-on )   " mark field as changed
+    ).
+
+
+    MODIFY ENTITIES OF ZAB_I_Warehouse IN LOCAL MODE            " Update Current Qty
+      ENTITY StorBin
+        UPDATE FIELDS ( CurrentQty )
+        WITH lt_update
+      MAPPED DATA(lt_mapped)
+      FAILED DATA(lt_failed_qty)
+      REPORTED DATA(lt_reported).
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+
+
+CLASS lhc_Warehouse DEFINITION INHERITING FROM cl_abap_behavior_handler.
+  PRIVATE SECTION.
+
+    METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
+      keys REQUEST requested_authorizations FOR Warehouse RESULT result.
+
+    METHODS get_global_authorizations FOR GLOBAL AUTHORIZATION
+      REQUEST requested_authorizations FOR Warehouse RESULT result.
+
+ENDCLASS.
+
+CLASS lhc_Warehouse IMPLEMENTATION.
+
+  METHOD get_instance_authorizations.
+  ENDMETHOD.
+
+  METHOD get_global_authorizations.
+  ENDMETHOD.
+
+ENDCLASS.
