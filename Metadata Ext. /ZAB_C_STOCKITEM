@@ -20,22 +20,33 @@ annotate entity ZAB_C_STOCKITEM with
    }
    ]
   @UI.identification: [{ label: 'Warehouse ID', position: 10}]
+  @UI.lineItem: [{ label: 'Warehouse ID', position: 10}]
+  @Search.defaultSearchElement: true
   WarehouseId;
   @UI.identification: [{ label: 'Bin ID', position: 20}]
+  @UI.lineItem: [{ label: 'Bin ID', position: 20} ,
+                    { type: #FOR_ACTION, dataAction: 'transferStock', label: 'Transfer Stock', position: 20 }]
   BinId;
   @UI.identification: [{ label: 'Stock Item ID', position: 30}]
+  @UI.lineItem: [{ label: 'Stock Item ID', position: 30}]
   StockItemId;
   @UI.identification: [{ label: 'Material', position: 40}]
+  @UI.lineItem: [{ label: 'Material', position: 40}]
   MaterialId;
   @UI.identification: [{ label: 'Quantity', position: 50}]
+  @UI.lineItem: [{ label: 'Quantity', position: 50}]
   Quantity;
   @UI.identification: [{ label: 'Unit', position: 60}]
+  @UI.lineItem: [{ label: 'Unit', position: 60}]
   Unit;
   @UI.identification: [{ label: 'Batch', position: 70}]
+  @UI.lineItem: [{ label: 'Batch', position: 70}]
   BatchNumber;
   @UI.identification: [{ label: 'Created By', position: 80}]
+  @UI.lineItem: [{ label: 'Created By', position: 80}]
   LocalCreatedBy;
   @UI.identification: [{ label: 'Created At', position: 90}]
+  @UI.lineItem: [{ label: 'Created At', position: 90}]
   LocalCreatedAt;
   @UI.hidden: true
   LocalLastChangedBy;
