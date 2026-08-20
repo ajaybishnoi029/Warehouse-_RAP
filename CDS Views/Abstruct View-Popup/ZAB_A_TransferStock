@@ -1,0 +1,19 @@
+@EndUserText.label: 'Transfer Stock - Bin'
+define abstract entity ZAB_A_TransferStock
+{
+  @UI.hidden  : true
+   WarehouseId : werks_d;
+  @Consumption.valueHelpDefinition: [{
+     entity   : {
+       name   : 'ZAB_BINID_VH',
+       element: 'BINID'
+     }
+      ,additionalBinding: [
+    { localElement: 'WarehouseId', element: 'warehouseid', usage: #FILTER }
+  ]
+   }]
+  @EndUserText.label: 'Target Bin'
+  TargetBinId : zwm_binid;
+  @EndUserText.label: 'Transfer Quantity'
+  TransferQty : abap.dec(9,2);
+}
