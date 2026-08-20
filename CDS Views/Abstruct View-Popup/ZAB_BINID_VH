@@ -1,0 +1,11 @@
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'WAREHOUSE BINID VALUE HELP'
+@Metadata.ignorePropagatedAnnotations: true
+@ObjectModel.resultSet.sizeCategory: #XS
+define view entity ZAB_BINID_VH
+  as select from zwm_storbin
+{
+  key   warehouse_id  as warehouseid,
+  key   bin_id        as BINID
+}
