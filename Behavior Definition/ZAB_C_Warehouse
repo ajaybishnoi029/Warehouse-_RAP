@@ -7,13 +7,16 @@ define behavior for ZAB_C_Warehouse alias Warehouse
   use update;
   use delete;
 
-  use association _storbin { create; }
+  use association _storbin;
+
+
 }
 
 define behavior for ZAB_C_STORBIN alias StorBin
 {
   use update;
   use delete;
+
 
   use association _warehouse;
   use association _StockItem { create; }
@@ -23,7 +26,7 @@ define behavior for ZAB_C_STOCKITEM alias StockItem
 {
   use update;
   use delete;
-
+  use action transferStock;   // NEW — exactly once
   use association _warehouse;
   use association _StorBin;
 }
