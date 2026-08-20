@@ -7,6 +7,11 @@ CLASS lhc_stockitem DEFINITION INHERITING FROM cl_abap_behavior_handler.
 
     METHODS CurrentQty FOR DETERMINE ON SAVE
        keys FOR StockItem~CurrentQty.
+    METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
+      keys REQUEST requested_authorizations FOR StockItem RESULT result.
+
+    METHODS transferStock FOR MODIFY
+      keys FOR ACTION StockItem~transferStock RESULT result.
 
 ENDCLASS.
 
@@ -90,6 +95,14 @@ CLASS lhc_stockitem IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD get_instance_authorizations.
+  ENDMETHOD.
+
+  METHOD transferStock.
+
+
+  ENDMETHOD.
+
 ENDCLASS.
 
 
@@ -97,15 +110,17 @@ ENDCLASS.
 CLASS lhc_Warehouse DEFINITION INHERITING FROM cl_abap_behavior_handler.
   PRIVATE SECTION.
 
+
     METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
       keys REQUEST requested_authorizations FOR Warehouse RESULT result.
-
     METHODS get_global_authorizations FOR GLOBAL AUTHORIZATION
-      REQUEST requested_authorizations FOR Warehouse RESULT result.
+      REQUEST requested_authorizations FOR warehouse RESULT result.
+
 
 ENDCLASS.
 
 CLASS lhc_Warehouse IMPLEMENTATION.
+
 
   METHOD get_instance_authorizations.
   ENDMETHOD.
