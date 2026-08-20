@@ -10,6 +10,9 @@ etag master LastChangedAt
   create ( authorization : global );
   update;
   delete;
+
+
+
   field ( readonly ) LocalCreatedAt, LocalCreatedBy, LocalLastChangedAt, LocalLastChangedBy, LastChangedAt;
   field ( readonly : update ) WarehouseId;
   association _storbin { create; }
@@ -40,6 +43,7 @@ etag master LastChangedAt
 {
   update;
   delete;
+
   field ( readonly ) WarehouseId, CurrentQty, LocalCreatedAt, LocalCreatedBy, LocalLastChangedAt, LocalLastChangedBy, LastChangedAt;
   field ( readonly : update ) BinId;
   association _warehouse;
@@ -69,13 +73,14 @@ etag master LastChangedAt
 {
   update;
   delete;
+  action transferStock parameter ZAB_A_TransferStock result [1] $self;   // NEW
   field ( readonly ) WarehouseId, BinId, LocalCreatedAt, LocalCreatedBy, LocalLastChangedAt, LocalLastChangedBy, LastChangedAt;
   field ( readonly : update ) StockItemId;
 
   association _warehouse;
   association _StorBin;
   validation ValidateQty on save { field Quantity; create; }
-  determination CurrentQty on save { create; update;  }
+  determination CurrentQty on save { create; update; }
   mapping for zwm_stockitem
     {
       WarehouseId        = warehouse_id;
