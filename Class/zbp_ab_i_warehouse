@@ -173,7 +173,15 @@ CLASS lhc_stockitem IMPLEMENTATION.
   FAILED DATA(lt_failed_crt)
   REPORTED DATA(lt_reported).
 
-      IF lt_failed_crt IS NOT INITIAL.          " Update Current Qty in Stock
+      IF lt_failed_crt-stockitem IS NOT INITIAL.
+
+        LOOP AT lt_reported-stockitem INTO DATA(ls_reported).     "  Creation failed
+          APPEND VALUE #(
+            %msg = ls_reported-%msg
+          ) TO reported-storbin.
+        ENDLOOP.
+
+      ELSE.                                                        " Update Current Qty in Stock
 
         DATA: lt_update TYPE TABLE FOR UPDATE ZAB_I_StockItem.
         lt_update = VALUE #(
@@ -194,7 +202,16 @@ CLASS lhc_stockitem IMPLEMENTATION.
           REPORTED DATA(lt_reported_upd).
 
 
+        APPEND VALUE #( %tky = ls_key-%tky
+                     %msg = new_message_with_text( severity = if_abap_behv_message=>severity-success
+                                               text     = |Stock transferred successfully to { ls_key-%param-TargetBinId }| ) )
+           TO reported-stockitem.
       ENDIF.
+
+      result = VALUE #( FOR item IN lt_stockitm_ts
+      ( %tky   = item-%tky
+        %param = item ) ).
+
     ENDIF.
 
   ENDMETHOD.
