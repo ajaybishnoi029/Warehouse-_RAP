@@ -5,13 +5,13 @@ CLASS lhc_stockitem DEFINITION INHERITING FROM cl_abap_behavior_handler.
     METHODS ValidateQty FOR VALIDATE ON SAVE
        keys FOR StockItem~ValidateQty.
 
-    METHODS CurrentQty FOR DETERMINE ON SAVE
+    METHODS CurrentQty FOR DETERMINE ON MODIFY  "--SAVE
        keys FOR StockItem~CurrentQty.
     METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
       keys REQUEST requested_authorizations FOR StockItem RESULT result.
 
     METHODS transferStock FOR MODIFY
-      keys FOR ACTION StockItem~transferStock RESULT result.
+       keys FOR ACTION StockItem~transferStock RESULT result.
 
 ENDCLASS.
 
@@ -99,7 +99,103 @@ CLASS lhc_stockitem IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD transferStock.
+    DATA lt_create TYPE TABLE FOR CREATE zab_i_storbin\_stockitem.
 
+
+
+    LOOP AT keys INTO DATA(ls_key).
+
+      " Entity's own keys (from the row that was clicked)
+      DATA(lv_warehouse_id) = ls_key-WarehouseId.
+      DATA(lv_bin_id)        = ls_key-BinId.
+      DATA(lv_stock_item_id) = ls_key-StockItemId.
+
+      " Action's input parameters (from the popup the user filled in)
+      DATA(lv_source_wh)   = ls_key-%param-SourceWarehouseId.
+      DATA(lv_target_bin)  = ls_key-%param-TargetBinId.
+      DATA(lv_transfer_qty) = ls_key-%param-TransferQty.
+
+    ENDLOOP.
+
+    READ ENTITIES OF ZAB_I_Warehouse IN LOCAL MODE
+    ENTITY StockItem
+    ALL FIELDS WITH CORRESPONDING #( keys )
+    RESULT DATA(lt_stockitm_ts)
+    FAILED DATA(lt_failed_itm).
+    DATA(ls_stockitm_ts) = VALUE #( lt_stockitm_ts[ 1 ] OPTIONAL ).
+
+    READ ENTITIES OF ZAB_I_Warehouse IN LOCAL MODE
+    ENTITY StorBin
+    ALL FIELDS  WITH VALUE #( ( WarehouseId = ls_stockitm_ts-WarehouseId BinId = lv_target_bin ) )
+    RESULT DATA(lt_storbin_ts)
+    FAILED DATA(lt_failed).
+
+    DATA(ls_storbin_ts) = VALUE #( lt_storbin_ts[ 1 ] OPTIONAL ).
+
+
+
+
+    DATA(lv_binspace) = ls_storbin_ts-MaxCapacity - ls_storbin_ts-CurrentQty.
+
+    IF  ls_storbin_ts-MaxCapacity <  ( ls_storbin_ts-CurrentQty + lv_transfer_qty ).
+
+
+      APPEND VALUE #( %tky = keys[ 1 ]-%tky
+                     %msg = new_message_with_text(
+                              severity = if_abap_behv_message=>severity-error
+                              text     = |Avilable Space in Bin ({ lv_target_bin }) :{ lv_binspace } |
+                            )
+                      ) TO reported-stockitem.
+
+    ELSE.
+
+
+      lt_create = VALUE #(
+    ( WarehouseId = ls_stockitm_ts-WarehouseId
+      BinId       = lv_target_bin                 " the EXISTING target bin
+      %target = VALUE #(
+        ( %cid        = |NEW{ sy-tabix }|
+          StockItemId = |T{ ls_stockitm_ts-StockItemId }|
+          MaterialId  = ls_stockitm_ts-MaterialId
+          Quantity    = lv_transfer_qty
+          Unit        = ls_stockitm_ts-Unit
+          BatchNumber = ls_stockitm_ts-BatchNumber )
+      ) )
+  ).
+      " ... after the loop, execute the create ...
+
+      MODIFY ENTITIES OF ZAB_I_Warehouse IN LOCAL MODE
+  ENTITY StorBin
+    CREATE BY \_stockitem
+      FIELDS ( StockItemId MaterialId Quantity Unit BatchNumber )
+      WITH lt_create
+  MAPPED DATA(lt_mapped)
+  FAILED DATA(lt_failed_crt)
+  REPORTED DATA(lt_reported).
+
+      IF lt_failed_crt IS NOT INITIAL.          " Update Current Qty in Stock
+
+        DATA: lt_update TYPE TABLE FOR UPDATE ZAB_I_StockItem.
+        lt_update = VALUE #(
+      ( WarehouseId = ls_stockitm_ts-WarehouseId
+        BinId       = ls_stockitm_ts-BinId
+        StockItemId = ls_stockitm_ts-StockItemId
+        Quantity  = ls_stockitm_ts-Quantity - lv_transfer_qty   " new quantity you calculated
+        %control-Quantity = if_abap_behv=>mk-on )   " mark field as changed
+    ).
+
+
+        MODIFY ENTITIES OF ZAB_I_Warehouse IN LOCAL MODE            " Update Quantity After Stock Transfer
+          ENTITY StockItem
+            UPDATE FIELDS ( Quantity )
+            WITH lt_update
+          MAPPED DATA(lt_mapped_upd)
+          FAILED DATA(lt_failed_qty)
+          REPORTED DATA(lt_reported_upd).
+
+
+      ENDIF.
+    ENDIF.
 
   ENDMETHOD.
 
