@@ -3,32 +3,42 @@
 @UI.headerInfo: {
     typeName: 'Warehouse',
     typeNamePlural: 'Warehouses',
+    imageUrl: 'LogoUrl',
     title: {
         type: #STANDARD,
         label: 'Warehouse',
         value: 'WarehouseId'
+    },
+     description: {
+        type: #STANDARD,
+         value: 'Name'
     }
 }
 annotate entity ZAB_C_Warehouse with
 {
   @UI.facet: [{
+                purpose: #HEADER,
+                position: 10,
+                qualifier: 'Status'
+   },
+    {
         id: 'Warehouse',
         purpose: #STANDARD,
-        position: 10 ,
+        position: 20 ,
         label: 'Warehouse',
         type: #IDENTIFICATION_REFERENCE
     },
     {
         id: 'storbin',
         purpose: #STANDARD,
-        position: 20 ,
+        position: 30 ,
         label: 'Store Bin',
         type: #LINEITEM_REFERENCE,
         targetElement: '_storbin'
     }
     ]
 
-  @UI.lineItem: [{ label: 'Warehouse ID', position: 10  }]
+  @UI.lineItem: [{ label: 'Warehouse ID', position: 10  } ]
   @UI.identification: [{ label: 'Warehouse ID', position: 10}]
   @UI.selectionField: [{ position: 10 }]
   @Search.defaultSearchElement: true
@@ -56,8 +66,14 @@ annotate entity ZAB_C_Warehouse with
   @UI.lineItem: [{ label: 'E-mail', position: 60  }]
   @UI.identification: [{ label: 'E-mail', position: 60}]
   EmailAddress;
-  @UI.lineItem: [{ label: 'Status', position: 70  }]
+
+  @UI.lineItem: [{ label: 'Status', position: 70  }  ]
   @UI.identification: [{ label: 'Status', position: 70}]
+  @Consumption.valueHelpDefinition: [{ entity: {
+   name: 'ZAB_STATUS_VH',
+   element: 'Status'
+  } }]
+  @UI.dataPoint: { qualifier: 'Status', title: 'Status' }
   Status;
   @UI.identification: [{ label: 'Created By', position: 80}]
   LocalCreatedBy;
@@ -69,6 +85,8 @@ annotate entity ZAB_C_Warehouse with
   LocalLastChangedAt;
   @UI.identification: [{ label: 'Last Changed At', position: 95}]
   LastChangedAt;
+  @UI.hidden: true
+  LogoUrl;
   /* Associations */
   //  _storbin;
 
