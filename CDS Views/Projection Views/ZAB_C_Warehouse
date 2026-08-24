@@ -1,6 +1,7 @@
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Projection View Warehouse'
 @Metadata.ignorePropagatedAnnotations: true
+@Metadata.allowExtensions: true
 define root view entity ZAB_C_Warehouse
   provider contract transactional_query
   as projection on ZAB_I_Warehouse
@@ -11,12 +12,16 @@ define root view entity ZAB_C_Warehouse
       CountryCode,
       PhoneNumber,
       EmailAddress,
+      @ObjectModel.text.element: [ 'OverallStatusText' ]
       Status,
+      _STATUS.Text as OverallStatusText,
       LocalCreatedBy,
       LocalCreatedAt,
       LocalLastChangedBy,
       LocalLastChangedAt,
       LastChangedAt,
+      LogoUrl,
       /* Associations */
-      _storbin : redirected to composition child ZAB_C_STORBIN
+      _storbin : redirected to composition child ZAB_C_STORBIN,
+      _STATUS
 }
