@@ -30,6 +30,10 @@ define root view entity ZAB_I_Warehouse
       local_last_changed_at as LocalLastChangedAt,
       @Semantics.systemDateTime.lastChangedAt: true
       last_changed_at       as LastChangedAt,
+      cast(
+       'https://b.zmtcdn.com//data/edition_assets/174074251385530.jpg'
+       as abap.char(500)
+      )                     as LogoUrl,
       _storbin,
       _STATUS
 }
