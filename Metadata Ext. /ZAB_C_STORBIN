@@ -3,34 +3,55 @@
 @UI.headerInfo: {
     typeName: 'Store Bin',
     typeNamePlural: 'Store Bin',
+    typeImageUrl: 'sap-icon://BusinessSuiteInAppSymbols/icon-handling-units',   --> https://ui5.sap.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html
     title: {
         type: #STANDARD,
-        label: 'Booking',
         value: 'BinId'
+    },
+    description: {
+        type: #STANDARD,
+        value: 'WarehouseId'
     }
 }
 annotate entity ZAB_C_STORBIN with
 {
-  @UI.facet: [{
+
+  @UI.facet: [
+  {
+      purpose: #HEADER,
+      position: 10 ,
+      type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'Qty'
+  },
+    {
+      purpose: #HEADER,
+      position: 11 ,
+      type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'Status'
+  },
+  {
       id: 'storbin',
       purpose: #STANDARD,
-      position: 10 ,
+      position: 20 ,
       label: 'Stor bin',
       type: #IDENTIFICATION_REFERENCE
   },
   {
       id: 'Stockitem',
       purpose: #STANDARD,
-      position: 20 ,
+      position: 30 ,
       label: 'Stock Item',
       type: #LINEITEM_REFERENCE,
       targetElement: '_StockItem'
   }
   ]
-  @UI: { lineItem: [{ position: 10 }],
+
+
+  @UI: { lineItem: [{ position: 10,  label: 'Warehouse ID' }],
          selectionField: [{ position: 10 }],
-         identification: [{ position: 10 }]
+         identification: [{ position: 10, label: 'Warehouse ID' }]
        }
+
   @Search.defaultSearchElement: true
   WarehouseId;
   @UI: { lineItem: [{ position: 20 }],
@@ -39,25 +60,35 @@ annotate entity ZAB_C_STORBIN with
        }
   @Search.defaultSearchElement: true
   BinId;
-  @UI: { lineItem: [{ position: 30 }],
-         identification: [{ position: 30 }]
+  @UI: { lineItem: [{ position: 30,label: 'Bin type' } ],
+         identification: [{ position: 30,label: 'Bin type' }]
        }
+  @Consumption.valueHelpDefinition: [{ entity: {
+     name: 'ZAB_BINTYPE_VH',
+     element: 'Status'
+    } }]
   BinType;
-  @UI: { lineItem: [{ position: 40 }],
-       identification: [{ position: 40 }]
+  @UI: { lineItem: [{ position: 40 , label: 'Max. Capacity'}],
+       identification: [{ position: 40, label: 'Max. Capacity' }]
      }
   MaxCapacity;
-  @UI: { lineItem: [{ position: 50 }],
-       identification: [{ position: 50 }]
+  @UI: { lineItem: [{ position: 50, label: 'Current Qty' }],
+       identification: [{ position: 50 ,  label: 'Current Qty'}]
      }
+  @UI.dataPoint: { qualifier: 'Qty',  title: 'Current Qty'   }
   CurrentQty;
-  @UI: { lineItem: [{ position: 60 }],
-         identification: [{ position: 60 }]
+  @UI: { lineItem: [{ position: 60,  label: 'Unit' }],
+         identification: [{ position: 60,label: 'Unit' }]
        }
   Unit;
-  @UI: { lineItem: [{ position: 70 }],
-       identification: [{ position: 70 }]
+  @UI: { lineItem: [{ position: 70, label: 'Status' } ],
+       identification: [{ position: 70, label: 'Status' }]
      }
+  @Consumption.valueHelpDefinition: [{ entity: {
+    name: 'ZAB_STATUS_VH',
+    element: 'Status'
+   } }]
+  @UI.dataPoint:{ qualifier: 'Status', title: 'Status' }
   Status;
   @UI.identification: [{ label: 'Created By', position: 80}]
   LocalCreatedBy;
