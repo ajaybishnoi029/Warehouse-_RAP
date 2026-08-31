@@ -28,6 +28,11 @@ define view entity ZAB_I_StorBin
       local_last_changed_at as LocalLastChangedAt,
       @Semantics.systemDateTime.lastChangedAt: true
       last_changed_at       as LastChangedAt,
+      case
+      when ( cast( current_qty as abap.dec( 13, 2 ) ) / cast( max_capacity as abap.dec( 13, 2 ) ) ) * cast( 100 as abap.dec( 13, 2 ) ) >= 100  then 1
+      when ( cast( current_qty as abap.dec( 13, 2 ) ) / cast( max_capacity as abap.dec( 13, 2 ) ) ) * cast( 100 as abap.dec( 13, 2 ) ) >= 70  then 2
+      else 3 
+      end                   as OccupancyCriticality,            -- 1 = RED , 2 = YELLOW,  3 =  GREEN
       _warehouse,
       _StockItem,
       _STATUS,
