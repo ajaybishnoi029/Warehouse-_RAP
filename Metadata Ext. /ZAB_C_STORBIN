@@ -13,21 +13,39 @@
         value: 'WarehouseId'
     }
 }
+
+@UI.chart: [
+  {
+    qualifier: 'radialChart',
+    title: 'Bin Occupancy %',
+//    description: 'Bin Occupancy Percentage',
+    chartType: #DONUT,
+    measures: ['CurrentQty'],
+    measureAttributes: [
+      {
+        measure: 'CurrentQty',
+        role: #AXIS_1,
+        asDataPoint: true,
+        useSequentialColorLevels: true
+      }
+    ]
+  }
+]
 annotate entity ZAB_C_STORBIN with
 {
 
   @UI.facet: [
   {
       purpose: #HEADER,
-      position: 10 ,
-      type: #DATAPOINT_REFERENCE,
-      targetQualifier: 'Qty'
-  },
-    {
-      purpose: #HEADER,
       position: 11 ,
       type: #DATAPOINT_REFERENCE,
       targetQualifier: 'Status'
+  },
+  {
+    purpose: #HEADER,
+    position: 12,
+    type       : #CHART_REFERENCE,
+    targetQualifier: 'radialChart'
   },
   {
       id: 'storbin',
@@ -72,11 +90,22 @@ annotate entity ZAB_C_STORBIN with
        identification: [{ position: 40, label: 'Max. Capacity' }]
      }
   MaxCapacity;
-  @UI: { lineItem: [{ position: 50, label: 'Current Qty' }],
+  @UI: { lineItem: [{ position: 50, label: 'Current Qty',  criticality: 'OccupancyCriticality' }],
        identification: [{ position: 50 ,  label: 'Current Qty'}]
-     }
-  @UI.dataPoint: { qualifier: 'Qty',  title: 'Current Qty'   }
+  }
+
+  //    @UI.dataPoint: { qualifier: 'Qty',  title: 'Current Qty'   }
+  @UI.dataPoint:  {
+  qualifier: 'CurrentQty',
+  targetValueElement: 'MaxCapacity',            //The relation between the value and the target value will be displayed as a percentage
+  criticality:  'OccupancyCriticality'
+  }
   CurrentQty;
+  //  @UI.hidden: true
+  @UI: { lineItem: [{ position: 55,  label: 'Criticality' }],        // Open only to check criticality
+           identification: [{ position: 55,label: 'Criticality' }]
+         }
+  OccupancyCriticality;
   @UI: { lineItem: [{ position: 60,  label: 'Unit' }],
          identification: [{ position: 60,label: 'Unit' }]
        }
@@ -88,7 +117,7 @@ annotate entity ZAB_C_STORBIN with
     name: 'ZAB_STATUS_VH',
     element: 'Status'
    } }]
-  @UI.dataPoint:{ qualifier: 'Status', title: 'Status' }
+  @UI.dataPoint:{ qualifier: 'Status', title: 'Status',  criticality: 'OccupancyCriticality' }    // criticality give Color according to Condition
   Status;
   @UI.identification: [{ label: 'Created By', position: 80}]
   LocalCreatedBy;
